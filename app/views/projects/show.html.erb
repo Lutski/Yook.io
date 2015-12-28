@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Title:</strong>
+  <%= @project.title %>
+</p>
+
+<h1>TODO LISTS</h1>
+<% @project.todo_lists.each do |f| %>
+	<%= link_to f.title, project_todo_list_path(@project, f) %><br>
+<% end %>
+<br>
+<%= link_to "New todo list", new_project_todo_list_path(@project) %><br>
+<%= link_to "All todo lists", project_todo_lists_path(@project) %>
+
+<br><br><br>
+
+<%= link_to 'Edit', edit_project_path(@project) %> |
+<%= link_to 'Back', projects_path %>

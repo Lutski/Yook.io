@@ -1,0 +1,5 @@
+<h1>All todolists for "<%= @project.title %>"</h1>
+
+<% @project.todo_lists.each do |f| %>
+	<%= link_to f.title, "#" %><br>
+<% end %>
