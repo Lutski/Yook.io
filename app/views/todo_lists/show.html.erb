@@ -1,5 +1,9 @@
 <h1>This is a todolist called "<%= @todo_list.title %>"</h1>
+<p><%= @todo_list.description %></p>
 
 
+<%= link_to "Delete", project_todo_list_path(@project, @todo_list), method: :delete, data: { confirm: "Are you sure?"} %> |
+<%= link_to "Edit", edit_project_todo_list_path(@project, @todo_list) %> 
 
+<br>
 <%= link_to "Back", project_path(@project) %>

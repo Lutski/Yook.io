@@ -1,74 +1,64 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: [:show, :edit, :update, :destroy]
+  before_action :set_project, only: [:show, :edit, :update, :destroy, :project_owner]
+  
+  before_action :project_owner, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!
 
-  # GET /projects
-  # GET /projects.json
   def index
-    @projects = Project.all
+    @projects = Project.where(user_id: current_user)
+    @user = current_user
   end
 
-  # GET /projects/1
-  # GET /projects/1.json
   def show
   end
 
-  # GET /projects/new
   def new
-    @project = Project.new
+    @project = current_user.projects.build
   end
 
-  # GET /projects/1/edit
   def edit
   end
 
-  # POST /projects
-  # POST /projects.json
   def create
-    @project = Project.new(project_params)
+    @project = current_user.projects.build(project_params)
 
-    respond_to do |format|
-      if @project.save
-        format.html { redirect_to @project, notice: 'Project was successfully created.' }
-        format.json { render :show, status: :created, location: @project }
-      else
-        format.html { render :new }
-        format.json { render json: @project.errors, status: :unprocessable_entity }
-      end
+    if @project.save
+      redirect_to @project, notice: 'Project was successfully created.'
+    else
+      render 'new'
     end
   end
 
-  # PATCH/PUT /projects/1
-  # PATCH/PUT /projects/1.json
   def update
-    respond_to do |format|
-      if @project.update(project_params)
-        format.html { redirect_to @project, notice: 'Project was successfully updated.' }
-        format.json { render :show, status: :ok, location: @project }
-      else
-        format.html { render :edit }
-        format.json { render json: @project.errors, status: :unprocessable_entity }
-      end
+    if @project.update(project_params)
+      redirect_to @project, notice: 'Project was successfully updated.'
+    else
+      render 'edit'
     end
   end
 
-  # DELETE /projects/1
-  # DELETE /projects/1.json
   def destroy
     @project.destroy
-    respond_to do |format|
-      format.html { redirect_to projects_url, notice: 'Project was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    redirect_to projects_url, notice: 'Project was successfully destroyed.'
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_project
       @project = Project.find(params[:id])
+
+      if @project.id == nil
+        redirect_to root_path
+      end
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def project_params
       params.require(:project).permit(:title)
+    end
+
+    def project_owner
+      unless (@project.user_id == current_user.id)
+        flash[:notice] = 'NO'
+        redirect_to root_path
+      end
     end
 end
